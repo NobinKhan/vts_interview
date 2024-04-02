@@ -1,8 +1,8 @@
 from enum import Enum
+from decimal import Decimal
 from piccolo.table import Table
-from piccolo.columns.column_types import Varchar, Date
-
-
+from piccolo.columns.column_types import Decimal as DecimalField, Varchar, Date, ForeignKey
+from apps.auth.tables import AuthUser
 
 class Movie(Table, tablename="movie"):
     class Genre(str, Enum):
@@ -41,3 +41,9 @@ class Movie(Table, tablename="movie"):
     genre = Varchar(length=20, choices=Genre, unique=False, required=True, null=True)
     rating = Varchar(length=8, choices=Rating, unique=False, required=True, null=True)
     release_date = Date(required=True, null=True)
+
+
+class Rating(Table, tablename="rating"):
+    user_id = ForeignKey(references=AuthUser)
+    movie_id = ForeignKey(references=Movie)
+    rating = DecimalField(digits=(2, 1), default=Decimal(0.0), required=True, null=True)
