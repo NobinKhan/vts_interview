@@ -12,4 +12,4 @@ DB = PostgresEngine(config={
 
 # A list of paths to piccolo apps
 # e.g. ['blog.piccolo_app']
-APP_REGISTRY = AppRegistry(apps=["apps.movie.piccolo_app", "apps.auth.piccolo_app"])
+APP_REGISTRY = AppRegistry(apps=["app.movie.piccolo_app", "app.auth.piccolo_app"])

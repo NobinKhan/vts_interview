@@ -2,7 +2,7 @@ from enum import Enum
 from decimal import Decimal
 from piccolo.table import Table
 from piccolo.columns.column_types import Decimal as DecimalField, Varchar, Date, ForeignKey
-from apps.auth.tables import AuthUser
+from app.auth.tables import AuthUser
 
 class Movie(Table, tablename="movie"):
     class Genre(str, Enum):
