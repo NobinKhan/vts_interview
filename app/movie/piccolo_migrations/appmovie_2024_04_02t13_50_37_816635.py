@@ -1,5 +1,5 @@
 from piccolo.apps.migrations.auto.migration_manager import MigrationManager
-from apps.movie.tables import Movie
+from app.movie.tables import Movie
 
 
 ID = "2024-04-02T13:50:37:816635"

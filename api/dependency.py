@@ -1,11 +1,21 @@
-from typing import Annotated
+from datetime import timedelta
+from fastapi import HTTPException, Request
 
-from fastapi import Header, HTTPException
+from authx import AuthX, AuthXConfig
+
+config = AuthXConfig(JWT_ACCESS_TOKEN_EXPIRES=timedelta(minutes=30))
+config.JWT_ALGORITHM = "HS256"
+config.JWT_SECRET_KEY = "SECRET_KEY"
 
 
-async def get_token_header(x_token: Annotated[str, Header()]):
-    if x_token != "fake-super-secret-token":
-        raise HTTPException(status_code=400, detail="X-Token header invalid")
+auth_token = AuthX(config=config)
+
+async def get_token_header(access: Request):
+    try:
+        await auth_token.access_token_required(access)
+    except Exception:
+        raise HTTPException(status_code=401, detail={"message": "Bad credentials"})
+    
 
 
 async def get_query_token(token: str):

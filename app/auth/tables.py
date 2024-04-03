@@ -27,8 +27,9 @@ class AuthUser(Table, tablename="auth_user"):
 
     id: Serial
     username = Varchar(length=100, unique=True, required=True, null=True)
-    name = Varchar(length=100, unique=True, required=True, null=True)
+    name = Varchar(length=100, null=True)
     password = Secret(length=255, required=True, null=True)
+    hashed_password = Secret(length=255, required=True, null=True)
     email = Varchar(length=255, unique=True, required=True, null=True)
     phone = Varchar(length=25, unique=True, required=True, null=True)
 
@@ -52,6 +53,15 @@ class AuthUser(Table, tablename="auth_user"):
 
     _min_password_length = 4
     _max_password_length = 128
+    _pbkdf2_iteration_count = 600_000
+
+    def __init__(self, **kwargs):
+        # Generating passwords upfront is expensive, so might need reworking.
+        password = kwargs.get("hashed_password", None)
+        if password:
+            if not password.startswith("pbkdf2_sha256"):
+                kwargs["hashed_password"] = self.__class__.hash_password(password)
+        super().__init__(**kwargs)
 
     @classmethod
     def get_salt(cls):
@@ -120,7 +130,7 @@ class AuthUser(Table, tablename="auth_user"):
         cls._validate_password(password=password)
 
         password = cls.hash_password(password)
-        await cls.update({cls.password: password}).where(clause).run()
+        await cls.update({cls.hashed_password: password}).where(clause).run()
 
     ###########################################################################
 
@@ -158,7 +168,7 @@ class AuthUser(Table, tablename="auth_user"):
         """
         Make sure that if the password is set, it's stored in a hashed form.
         """
-        if name == "password" and not value.startswith("pbkdf2_sha256"):
+        if name == "hashed_password" and not value.startswith("pbkdf2_sha256"):
             value = self.__class__.hash_password(value)
 
         super().__setattr__(name, value)
@@ -198,26 +208,23 @@ class AuthUser(Table, tablename="auth_user"):
             return None
 
         response = (
-            await cls.select(cls._meta.primary_key, cls.password)
+            await cls.select(cls._meta.primary_key, cls.hashed_password, cls.password, cls.username)
             .where(cls.username == username)
             .first()
             .run()
         )
         if not response:
-            # No match found. We still call hash_password
-            # here to mitigate the ability to enumerate
-            # users via response timings
-            cls.hash_password(password)
             return None
 
-        stored_password = response["password"]
+        stored_password = response["hashed_password"]
+        stored_raw_password = response["password"]
 
         algorithm, iterations_, salt, hashed = cls.split_stored_password(
             stored_password
         )
         iterations = int(iterations_)
 
-        if cls.hash_password(password, salt, iterations) == stored_password:
+        if stored_raw_password == password:
             # If the password was hashed in an earlier Piccolo version, update
             # it so it's hashed with the currently recommended number of
             # iterations:
@@ -227,7 +234,7 @@ class AuthUser(Table, tablename="auth_user"):
             await cls.update({cls.last_login: datetime.datetime.now()}).where(
                 cls.username == username
             )
-            return response["id"]
+            return response
         else:
             return None
 

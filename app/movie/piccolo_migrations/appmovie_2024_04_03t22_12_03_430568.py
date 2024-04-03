@@ -39,92 +39,22 @@ class Movie(Table, tablename="movie", schema=None):
     )
 
 
-ID = "2024-04-02T13:50:34:204175"
+ID = "2024-04-03T22:12:03:430568"
 VERSION = "1.5.0"
-DESCRIPTION = "Create Movie & Rating Table"
+DESCRIPTION = ""
 
 
 async def forwards():
     manager = MigrationManager(
-        migration_id=ID, app_name="apps.movie", description=DESCRIPTION
-    )
-
-    manager.add_table(
-        class_name="Rating", tablename="rating", schema=None, columns=None
+        migration_id=ID, app_name="app.movie", description=DESCRIPTION
     )
 
     manager.add_table(
         class_name="Movie", tablename="movie", schema=None, columns=None
     )
 
-    manager.add_column(
-        table_class_name="Rating",
-        tablename="rating",
-        column_name="user_id",
-        db_column_name="user_id",
-        column_class_name="ForeignKey",
-        column_class=ForeignKey,
-        params={
-            "references": AuthUser,
-            "on_delete": OnDelete.cascade,
-            "on_update": OnUpdate.cascade,
-            "target_column": None,
-            "null": True,
-            "primary_key": False,
-            "unique": False,
-            "index": False,
-            "index_method": IndexMethod.btree,
-            "choices": None,
-            "db_column_name": None,
-            "secret": False,
-        },
-        schema=None,
-    )
-
-    manager.add_column(
-        table_class_name="Rating",
-        tablename="rating",
-        column_name="movie_id",
-        db_column_name="movie_id",
-        column_class_name="ForeignKey",
-        column_class=ForeignKey,
-        params={
-            "references": Movie,
-            "on_delete": OnDelete.cascade,
-            "on_update": OnUpdate.cascade,
-            "target_column": None,
-            "null": True,
-            "primary_key": False,
-            "unique": False,
-            "index": False,
-            "index_method": IndexMethod.btree,
-            "choices": None,
-            "db_column_name": None,
-            "secret": False,
-        },
-        schema=None,
-    )
-
-    manager.add_column(
-        table_class_name="Rating",
-        tablename="rating",
-        column_name="rating",
-        db_column_name="rating",
-        column_class_name="Decimal",
-        column_class=Decimal,
-        params={
-            "default": decimal.Decimal("0"),
-            "digits": (2, 1),
-            "null": True,
-            "primary_key": False,
-            "unique": False,
-            "index": False,
-            "index_method": IndexMethod.btree,
-            "choices": None,
-            "db_column_name": None,
-            "secret": False,
-        },
-        schema=None,
+    manager.add_table(
+        class_name="Rating", tablename="rating", schema=None, columns=None
     )
 
     manager.add_column(
@@ -238,6 +168,76 @@ async def forwards():
         column_class=Date,
         params={
             "default": DateNow(),
+            "null": True,
+            "primary_key": False,
+            "unique": False,
+            "index": False,
+            "index_method": IndexMethod.btree,
+            "choices": None,
+            "db_column_name": None,
+            "secret": False,
+        },
+        schema=None,
+    )
+
+    manager.add_column(
+        table_class_name="Rating",
+        tablename="rating",
+        column_name="user_id",
+        db_column_name="user_id",
+        column_class_name="ForeignKey",
+        column_class=ForeignKey,
+        params={
+            "references": AuthUser,
+            "on_delete": OnDelete.cascade,
+            "on_update": OnUpdate.cascade,
+            "target_column": None,
+            "null": True,
+            "primary_key": False,
+            "unique": False,
+            "index": False,
+            "index_method": IndexMethod.btree,
+            "choices": None,
+            "db_column_name": None,
+            "secret": False,
+        },
+        schema=None,
+    )
+
+    manager.add_column(
+        table_class_name="Rating",
+        tablename="rating",
+        column_name="movie_id",
+        db_column_name="movie_id",
+        column_class_name="ForeignKey",
+        column_class=ForeignKey,
+        params={
+            "references": Movie,
+            "on_delete": OnDelete.cascade,
+            "on_update": OnUpdate.cascade,
+            "target_column": None,
+            "null": True,
+            "primary_key": False,
+            "unique": False,
+            "index": False,
+            "index_method": IndexMethod.btree,
+            "choices": None,
+            "db_column_name": None,
+            "secret": False,
+        },
+        schema=None,
+    )
+
+    manager.add_column(
+        table_class_name="Rating",
+        tablename="rating",
+        column_name="rating",
+        db_column_name="rating",
+        column_class_name="Decimal",
+        column_class=Decimal,
+        params={
+            "default": decimal.Decimal("0"),
+            "digits": (2, 1),
             "null": True,
             "primary_key": False,
             "unique": False,

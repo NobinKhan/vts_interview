@@ -6,14 +6,14 @@ from piccolo.columns.column_types import Varchar
 from piccolo.columns.indexes import IndexMethod
 
 
-ID = "2024-04-02T12:05:41:619640"
+ID = "2024-04-03T22:11:47:472102"
 VERSION = "1.5.0"
-DESCRIPTION = "Create AuthUser Table"
+DESCRIPTION = ""
 
 
 async def forwards():
     manager = MigrationManager(
-        migration_id=ID, app_name="apps.auth", description=DESCRIPTION
+        migration_id=ID, app_name="app.auth", description=DESCRIPTION
     )
 
     manager.add_table(
@@ -69,6 +69,28 @@ async def forwards():
         tablename="auth_user",
         column_name="password",
         db_column_name="password",
+        column_class_name="Secret",
+        column_class=Secret,
+        params={
+            "length": 255,
+            "default": "",
+            "null": True,
+            "primary_key": False,
+            "unique": False,
+            "index": False,
+            "index_method": IndexMethod.btree,
+            "choices": None,
+            "db_column_name": None,
+            "secret": True,
+        },
+        schema=None,
+    )
+
+    manager.add_column(
+        table_class_name="AuthUser",
+        tablename="auth_user",
+        column_name="hashed_password",
+        db_column_name="hashed_password",
         column_class_name="Secret",
         column_class=Secret,
         params={
