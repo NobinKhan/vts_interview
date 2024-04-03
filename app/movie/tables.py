@@ -1,5 +1,8 @@
 from enum import Enum
 from decimal import Decimal
+from typing import Sequence
+from piccolo.columns import Column
+from piccolo.query import Insert, Update
 from piccolo.table import Table
 from piccolo.columns.column_types import Decimal as DecimalField, Varchar, Date, ForeignKey
 from app.auth.tables import AuthUser
@@ -47,3 +50,8 @@ class Rating(Table, tablename="rating"):
     user_id = ForeignKey(references=AuthUser)
     movie_id = ForeignKey(references=Movie)
     rating = DecimalField(digits=(2, 1), default=Decimal(0.0), required=True, null=True)
+
+    def save(self, columns: Sequence[Column | str] | None = None) -> Insert | Update:
+        if self.rating < 0.0 or self.rating > 10.0:
+            raise ValueError("Rating must be between 0.0 and 10.0")
+        return super().save(columns)

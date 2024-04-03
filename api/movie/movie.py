@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from decimal import Decimal
 from asyncpg import UniqueViolationError
 from authx import AuthX
@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import ORJSONResponse
 from pydantic import BaseModel, validator
 
-from api.dependency import get_token_header, config
+from api.dependency import get_token_header, config, CustomResponse
 from app.auth.tables import AuthUser
 from app.movie.tables import Movie, Rating
 
@@ -63,6 +63,22 @@ async def get_movies():
     return ORJSONResponse(movies)
 
 
+@router.get("/rating/all/")
+async def get_movie_ratings():
+    movie_ratings: list = (
+        await Rating.select()
+        .columns(
+            Rating.id,
+            Rating.user_id,
+            Rating.movie_id,
+            Rating.rating,
+        )
+        .order_by(Rating.id)
+        .output()
+    )
+    return CustomResponse(movie_ratings)
+
+
 @router.post("/{movie_id}/rate/", status_code=201)
 async def create_rate(movie_id: int, data: CreateMovieRating, request: Request):
     payload = await AuthX(config=config).access_token_required(request)
@@ -75,6 +91,9 @@ async def create_rate(movie_id: int, data: CreateMovieRating, request: Request):
         raise HTTPException(
             status_code=400, detail={"message": "You have already rated this movie!"}
         )
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail={"message": error.args})
+
     except Exception:
         raise HTTPException(status_code=400, detail={"message": "something went wrong"})
 
