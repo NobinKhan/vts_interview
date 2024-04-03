@@ -1,6 +1,6 @@
 from authx import AuthX
 from pydantic import BaseModel, EmailStr
-from asyncpg.exceptions import UniqueViolationError
+from asyncpg import UniqueViolationError
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import ORJSONResponse
