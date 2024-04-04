@@ -63,6 +63,27 @@ async def get_movies():
     return ORJSONResponse(movies)
 
 
+@router.get("/search/")
+async def search_movies(keyword: str):
+    if keyword:
+        if keyword.isdigit():
+            movies: list = (
+                await Rating.select(
+                    Rating.movie_id, 
+                    Rating.rating,
+                    Rating.count(Rating.user_id),
+                )
+                .where(
+                    Rating.movie_id == int(keyword),
+                )
+                .order_by(Rating.movie_id)
+                .output()
+            )
+    print(movies)
+    # return "hello"
+    return CustomResponse(movies)
+
+
 @router.get("/rating/all/")
 async def get_movie_ratings():
     movie_ratings: list = (
