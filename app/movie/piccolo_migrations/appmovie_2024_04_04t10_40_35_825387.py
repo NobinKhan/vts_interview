@@ -1,8 +1,7 @@
 from piccolo.apps.migrations.auto.migration_manager import MigrationManager
 from app.movie.tables import Movie
 
-
-ID = "2024-04-02T13:50:37:816635"
+ID = "2024-04-04T10:40:35:825387"
 VERSION = "1.5.0"
 DESCRIPTION = "Create Unique Constraints on Movie Table"
 
