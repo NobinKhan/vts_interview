@@ -6,7 +6,7 @@ the APP_CONFIG.
 import os
 
 from piccolo.conf.apps import AppConfig, table_finder
-
+from app.auth.commands.load_data import load_data
 
 CURRENT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
@@ -18,5 +18,5 @@ APP_CONFIG = AppConfig(
     ),
     table_classes=table_finder(modules=["app.auth.tables"], exclude_imported=True),
     migration_dependencies=[],
-    commands=[],
+    commands=[load_data],
 )
