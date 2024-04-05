@@ -18,6 +18,7 @@ WORKDIR /home/${APP_USER}
 COPY --chown=${APP_USER}:${APP_USER} --chmod=775 api /home/${APP_USER}/project/api
 COPY --chown=${APP_USER}:${APP_USER} --chmod=775 app /home/${APP_USER}/project/app
 COPY --chown=${APP_USER}:${APP_USER} --chmod=775 conf /home/${APP_USER}/project/conf
+COPY --chown=${APP_USER}:${APP_USER} --chmod=775 .env.sample /home/${APP_USER}/project/.env
 COPY --chown=${APP_USER}:${APP_USER} --chmod=775 pyproject.toml poetry.lock README.md /home/${APP_USER}/
 
 RUN set -eux; \
@@ -50,4 +51,9 @@ WORKDIR /home/${APP_USER}/project/
 COPY --from=base-layer --chown=${UID}:${GID} --chmod=775 ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 COPY --from=base-layer --chown=${UID}:${GID} --chmod=775 /home/${APP_USER}/project/ /home/${APP_USER}/project/
 
-ENTRYPOINT ["sh", "-c", "granian --interface asgi conf.server:app --host 0.0.0.0 --port 8000 --workers 4 --threads 4 --log"]
+ENTRYPOINT ["sh", "-c", " sleep 10 && \
+    piccolo migrations forward all && \
+    piccolo app.auth load_data && \
+    piccolo app.movie load_data && \
+    granian --interface asgi conf.server:app --host 0.0.0.0 --port 8000 --workers 4 --threads 4 \
+"]

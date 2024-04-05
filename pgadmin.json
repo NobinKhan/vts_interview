@@ -1,0 +1,13 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "VTS Database",
+            "Group": "VTS_Server",
+            "Host": "vts_database",
+            "Port": 5432,
+            "MaintenanceDB": "vts_db",
+            "Username": "nobinkhan",
+            "PassFile": "/pgadmin4/pgpassfile"
+        }
+    }
+}

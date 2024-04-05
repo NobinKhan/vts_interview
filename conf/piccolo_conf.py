@@ -1,7 +1,10 @@
 from os import environ
+from dotenv import load_dotenv
 from piccolo.conf.apps import AppRegistry
 from piccolo.engine.postgres import PostgresEngine
 
+
+load_dotenv(".env")
 
 DB = PostgresEngine(
     config={

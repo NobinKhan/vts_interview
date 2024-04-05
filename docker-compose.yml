@@ -1,0 +1,42 @@
+services:
+  vts_database:
+    container_name: vts_database
+    image: postgres:16.2-alpine3.19
+    env_file:
+      - path: ./.env
+    networks:
+      - vts_network
+
+  vts_pgadmin:
+    container_name: vts_pgadmin
+    image: dpage/pgadmin4:8.5
+    env_file:
+      - path: ./.env
+    ports:
+      - 5050:80
+    depends_on:
+      - vts_database
+    volumes:
+      - ./pgadmin.json:/pgadmin4/servers.json
+    networks:
+      - vts_network
+
+  vts_interview:
+    container_name: vts_interview
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    env_file:
+      - path: ./.env
+    depends_on:
+      - vts_pgadmin
+      - vts_database
+    networks:
+      - vts_network
+
+
+networks:
+  vts_network:
+    driver: bridge
