@@ -79,5 +79,5 @@ I have made many assumpsions but it will be easy for me if we disscuss it later.
 ### How Much Problem I Solved?
  apologize that the task is coming in a bit later than expected due to my current workload at my job. However, I'm happy to report that I've been able to complete the task to the best of my ability. Let me know if you'd like me to walk you through my approach.
 
-### My CV
-![CV](https://raw.githubusercontent.com/NobinKhan/vts_interview/main/NazrulIslam.pdf "NobinKhan CV")
+### [My CV](NazrulIslam.pdf)
+![CV](NazrulIslam.png "NobinKhan CV")

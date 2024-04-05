@@ -17,6 +17,7 @@ repos:
         - id: check-merge-conflict
         - id: check-docstring-first
         - id: check-added-large-files
+          exclude: NazrulIslam.png
         - id: detect-private-key
         - id: detect-aws-credentials
           args: ['--allow-missing-credentials']
