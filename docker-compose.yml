@@ -2,16 +2,19 @@ services:
   vts_database:
     container_name: vts_database
     image: postgres:16.2-alpine3.19
-    env_file:
-      - path: ./.env
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     networks:
       - vts_network
 
   vts_pgadmin:
     container_name: vts_pgadmin
     image: dpage/pgadmin4:8.5
-    env_file:
-      - path: ./.env
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
     ports:
       - 5050:80
     depends_on:
@@ -28,8 +31,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8000:8000
-    env_file:
-      - path: ./.env
     depends_on:
       - vts_pgadmin
       - vts_database
