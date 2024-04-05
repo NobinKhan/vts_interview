@@ -1,10 +1,14 @@
 from datetime import datetime
 from decimal import Decimal
+
 from asyncpg import UniqueViolationError
-from authx import AuthX
+from piccolo.query import Avg
+from pydantic import BaseModel, validator
+
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import ORJSONResponse
-from pydantic import BaseModel, validator
+
+from authx import AuthX
 
 from api.dependency import get_token_header, config, CustomResponse
 from app.auth.tables import AuthUser
@@ -63,25 +67,45 @@ async def get_movies():
     return ORJSONResponse(movies)
 
 
-@router.get("/search/")
+@router.get("/search/", dependencies=None)
 async def search_movies(keyword: str):
     if keyword:
-        if keyword.isdigit():
-            movies: list = (
-                await Rating.select(
-                    Rating.movie_id, 
-                    Rating.rating,
-                    Rating.count(Rating.user_id),
-                )
-                .where(
-                    Rating.movie_id == int(keyword),
-                )
-                .order_by(Rating.movie_id)
-                .output()
+        movies = (
+            await Rating.select(
+                Rating.movie_id,
+                Rating.movie_id.name,
+                Rating.movie_id.genre,
+                Rating.movie_id.rating,
             )
-    print(movies)
-    # return "hello"
-    return CustomResponse(movies)
+            .where(
+                Rating.movie_id.name.ilike(f"%{keyword}%"),
+            )
+            .distinct()
+        )
+
+        user_rating = (
+            await Rating.select(Avg(Rating.rating))
+            .where(
+                Rating.movie_id.name.ilike(f"%{keyword}%"),
+            )
+            .group_by(Rating.movie_id)
+        )
+
+        data = []
+        for counter in range(0, len(movies)):
+            data.append(
+                {
+                    "movie_id": movies[counter]["movie_id"],
+                    "movie_name": movies[counter]["movie_id.name"],
+                    "movie_genre": movies[counter]["movie_id.genre"],
+                    "rated": movies[counter]["movie_id.rating"],
+                    "avarage_user_rating": user_rating[counter]["avg"].quantize(
+                        Decimal("0.0")
+                    ),
+                }
+            )
+
+    return CustomResponse(data)
 
 
 @router.get("/rating/all/")
