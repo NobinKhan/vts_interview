@@ -31,7 +31,8 @@ async def create_user(data: CreateUser):
     except UniqueViolationError as error:
         raise HTTPException(status_code=400, detail={"message": error.detail})
     return ORJSONResponse(
-        status_code=201, content={"message": "User created successfully"}
+        status_code=201,
+        content={"message": "User created successfully"},
     )
 
 
@@ -45,7 +46,8 @@ async def read_users():
             AuthUser.phone,
             AuthUser.password,
             AuthUser.email,
-        ).order_by(AuthUser.id)
+        )
+        .order_by(AuthUser.id)
         .output()
     )
     return ORJSONResponse(users)
@@ -54,11 +56,15 @@ async def read_users():
 @router.get("/me/", dependencies=[Depends(get_token_header)])
 async def read_user_me(payload: Request):
     data = await AuthX(config=config).access_token_required(payload)
-    me = await AuthUser.select(
+    me = (
+        await AuthUser.select(
             AuthUser.id,
             AuthUser.name,
             AuthUser.username,
             AuthUser.phone,
             AuthUser.email,
-        ).where(AuthUser.id == int(data.sub)).first()
+        )
+        .where(AuthUser.id == int(data.sub))
+        .first()
+    )
     return ORJSONResponse(me)

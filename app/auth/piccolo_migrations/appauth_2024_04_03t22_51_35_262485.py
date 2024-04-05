@@ -9,7 +9,9 @@ DESCRIPTION = ""
 
 async def forwards():
     manager = MigrationManager(
-        migration_id=ID, app_name="app.auth", description=DESCRIPTION
+        migration_id=ID,
+        app_name="app.auth",
+        description=DESCRIPTION,
     )
 
     manager.alter_column(

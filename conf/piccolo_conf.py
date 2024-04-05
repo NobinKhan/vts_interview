@@ -1,18 +1,23 @@
+from os import environ
 from piccolo.conf.apps import AppRegistry
 from piccolo.engine.postgres import PostgresEngine
 
 
-DB = PostgresEngine(config={
-    'host': '127.0.0.1',
-    'database': 'vts_db',
-    'user': 'nobin',
-    'password': 'randompassforme'
-})
+DB = PostgresEngine(
+    config={
+        "host": environ.get("POSTGRES_HOST", "localhost"),
+        "database": environ.get("POSTGRES_DB", "postgres"),
+        "user": environ.get("POSTGRES_USER", "postgres"),
+        "password": environ.get("POSTGRES_PASSWORD", "postgres"),
+    },
+)
 
 
 # A list of paths to piccolo apps
 # e.g. ['blog.piccolo_app']
-APP_REGISTRY = AppRegistry(apps=[
-    "app.auth.piccolo_app",
-    "app.movie.piccolo_app",
-])
+APP_REGISTRY = AppRegistry(
+    apps=[
+        "app.auth.piccolo_app",
+        "app.movie.piccolo_app",
+    ],
+)

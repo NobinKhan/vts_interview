@@ -46,7 +46,8 @@ async def create_movie(data: CreateMovie):
     except Exception:
         raise HTTPException(status_code=400, detail={"message": "Something went wrong"})
     return ORJSONResponse(
-        status_code=201, content={"message": "Movie created successfully"}
+        status_code=201,
+        content={"message": "Movie created successfully"},
     )
 
 
@@ -100,9 +101,9 @@ async def search_movies(keyword: str):
                     "movie_genre": movies[counter]["movie_id.genre"],
                     "rated": movies[counter]["movie_id.rating"],
                     "avarage_user_rating": user_rating[counter]["avg"].quantize(
-                        Decimal("0.0")
+                        Decimal("0.0"),
                     ),
-                }
+                },
             )
 
     return CustomResponse(data)
@@ -134,7 +135,8 @@ async def create_rate(movie_id: int, data: CreateMovieRating, request: Request):
         await Rating(user_id=user.id, movie_id=movie_id, rating=data.rating).save()
     except UniqueViolationError:
         raise HTTPException(
-            status_code=400, detail={"message": "You have already rated this movie!"}
+            status_code=400,
+            detail={"message": "You have already rated this movie!"},
         )
     except ValueError as error:
         raise HTTPException(status_code=400, detail={"message": error.args})
@@ -143,5 +145,6 @@ async def create_rate(movie_id: int, data: CreateMovieRating, request: Request):
         raise HTTPException(status_code=400, detail={"message": "something went wrong"})
 
     return ORJSONResponse(
-        status_code=201, content={"message": "Movie Rating created successfully"}
+        status_code=201,
+        content={"message": "Movie Rating created successfully"},
     )

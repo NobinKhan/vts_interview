@@ -13,11 +13,16 @@ DESCRIPTION = ""
 
 async def forwards():
     manager = MigrationManager(
-        migration_id=ID, app_name="app.auth", description=DESCRIPTION
+        migration_id=ID,
+        app_name="app.auth",
+        description=DESCRIPTION,
     )
 
     manager.add_table(
-        class_name="AuthUser", tablename="auth_user", schema=None, columns=None
+        class_name="AuthUser",
+        tablename="auth_user",
+        schema=None,
+        columns=None,
     )
 
     manager.add_column(

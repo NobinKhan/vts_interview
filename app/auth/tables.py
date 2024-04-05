@@ -35,7 +35,8 @@ class AuthUser(Table, tablename="auth_user"):
 
     active = Boolean(default=False, null=True)
     admin = Boolean(
-        default=False, help_text="An admin can log into the Piccolo admin GUI."
+        default=False,
+        help_text="An admin can log into the Piccolo admin GUI.",
     )
     superuser = Boolean(
         default=False,
@@ -98,9 +99,7 @@ class AuthUser(Table, tablename="auth_user"):
             raise ValueError("The password is too long.")
 
         if password.startswith("pbkdf2_sha256"):
-            logger.warning(
-                "Tried to create a user with an already hashed password."
-            )
+            logger.warning("Tried to create a user with an already hashed password.")
             raise ValueError("Do not pass a hashed password.")
 
     ###########################################################################
@@ -123,9 +122,7 @@ class AuthUser(Table, tablename="auth_user"):
         elif isinstance(user, int):
             clause = cls.id == user
         else:
-            raise ValueError(
-                "The `user` arg must be a user id, or a username."
-            )
+            raise ValueError("The `user` arg must be a user id, or a username.")
 
         cls._validate_password(password=password)
 
@@ -136,7 +133,10 @@ class AuthUser(Table, tablename="auth_user"):
 
     @classmethod
     def hash_password(
-        cls, password: str, salt: str = "", iterations: t.Optional[int] = None
+        cls,
+        password: str,
+        salt: str = "",
+        iterations: t.Optional[int] = None,
     ) -> str:
         """
         Hashes the password, ready for storage, and for comparing during
@@ -208,7 +208,12 @@ class AuthUser(Table, tablename="auth_user"):
             return None
 
         response = (
-            await cls.select(cls._meta.primary_key, cls.hashed_password, cls.password, cls.username)
+            await cls.select(
+                cls._meta.primary_key,
+                cls.hashed_password,
+                cls.password,
+                cls.username,
+            )
             .where(cls.username == username)
             .first()
             .run()
@@ -220,7 +225,7 @@ class AuthUser(Table, tablename="auth_user"):
         stored_raw_password = response["password"]
 
         algorithm, iterations_, salt, hashed = cls.split_stored_password(
-            stored_password
+            stored_password,
         )
         iterations = int(iterations_)
 
@@ -232,7 +237,7 @@ class AuthUser(Table, tablename="auth_user"):
                 await cls.update_password(username, password)
 
             await cls.update({cls.last_login: datetime.datetime.now()}).where(
-                cls.username == username
+                cls.username == username,
             )
             return response
         else:
@@ -241,21 +246,20 @@ class AuthUser(Table, tablename="auth_user"):
     ###########################################################################
 
     @classmethod
-    def create_user_sync(
-        cls, username: str, password: str, **extra_params
-    ) -> AuthUser:
+    def create_user_sync(cls, username: str, password: str, **extra_params) -> AuthUser:
         """
         A sync equivalent of :meth:`create_user`.
         """
         return run_sync(
-            cls.create_user(
-                username=username, password=password, **extra_params
-            )
+            cls.create_user(username=username, password=password, **extra_params),
         )
 
     @classmethod
     async def create_user(
-        cls, username: str, password: str, **extra_params
+        cls,
+        username: str,
+        password: str,
+        **extra_params,
     ) -> AuthUser:
         """
         Creates a new user, and saves it in the database. It is recommended to

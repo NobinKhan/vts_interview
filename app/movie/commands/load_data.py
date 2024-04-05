@@ -19,6 +19,7 @@ class CreateMovie(BaseModel):
         datetime_obj = datetime.strptime(value, "%d-%m-%Y")
         return datetime_obj
 
+
 class CreateMovieRating(BaseModel):
     id: int
     user_id: int
@@ -35,14 +36,12 @@ async def load_data():
 
     try:
         await Movie.insert(*[Movie(**CreateMovie(**d).model_dump()) for d in MOVIES])
-        await Rating.insert(*[Rating(**CreateMovieRating(**d).model_dump()) for d in RATINGS])
+        await Rating.insert(
+            *[Rating(**CreateMovieRating(**d).model_dump()) for d in RATINGS],
+        )
     except ValidationError as e:
         print(f"Failed to load data: {e.errors()}")
 
     # We need to update the sequence, as we explicitly set the IDs.
-    await Movie.raw(
-        "SELECT setval('movie_id_seq', max(id)) FROM movie"
-    )
-    await Rating.raw(
-        "SELECT setval('rating_id_seq', max(id)) FROM rating"
-    )
+    await Movie.raw("SELECT setval('movie_id_seq', max(id)) FROM movie")
+    await Rating.raw("SELECT setval('rating_id_seq', max(id)) FROM rating")

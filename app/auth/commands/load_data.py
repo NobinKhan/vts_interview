@@ -12,6 +12,4 @@ async def load_data():
     [await AuthUser.create_user(username=data["name"], **data) for data in USERS]
 
     # We need to update the sequence, as we explicitly set the IDs.
-    await AuthUser.raw(
-        "SELECT setval('auth_user_id_seq', max(id)) FROM auth_user"
-    )
+    await AuthUser.raw("SELECT setval('auth_user_id_seq', max(id)) FROM auth_user")
