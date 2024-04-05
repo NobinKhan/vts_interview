@@ -52,6 +52,7 @@ COPY --from=base-layer --chown=${UID}:${GID} --chmod=775 ${VIRTUAL_ENV} ${VIRTUA
 COPY --from=base-layer --chown=${UID}:${GID} --chmod=775 /home/${APP_USER}/project/ /home/${APP_USER}/project/
 
 ENTRYPOINT ["sh", "-c", " sleep 10 && \
+    export PICCOLO_CONF=conf.piccolo_conf && \
     piccolo migrations forward all && \
     piccolo app.auth load_data && \
     piccolo app.movie load_data && \

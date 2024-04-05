@@ -71,7 +71,8 @@ jobs:
       - name: Testing Api Endpoints
         run: |
           sleep 10
-          ./script/run_test.sh
+          docker build -t vts_test:latest -f ./Test.Dockerfile .
+          docker run --rm --name vts_test --net vts_interview_vts_network vts_test:latest
 
       - name: Stoping Containers
         run: |

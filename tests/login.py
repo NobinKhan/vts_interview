@@ -1,6 +1,6 @@
 import http.client
 
-conn = http.client.HTTPConnection("127.0.0.1:8000")
+conn = http.client.HTTPConnection("vts_interview:8000")
 
 payload = '{\n\t"username": "Jhon Doe",\n\t"password": "pass1"\n}'
 
